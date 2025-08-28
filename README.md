@@ -1,0 +1,1 @@
+# omarchy-minsoft-edition
