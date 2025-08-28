@@ -34,6 +34,7 @@
     "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
     "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%\nTime to full: {time}",
     "interval": 5,
+    "on-click": "omarchy-menu power",
     "states": {
       "warning": 20,
       "critical": 10
