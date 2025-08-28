@@ -54,11 +54,11 @@ https://youtu.be/0E-zU2Uq-rM?si=P68lZO7aK-Q5-maE
 - zsh
 - oh my zsh
   - plugins (also install requested apps : zoxide fzf fd bat)
-https://github.com/Aloxaf/fzf-tab
-https://github.com/wfxr/forgit
-https://github.com/zsh-users/zsh-autosuggestions
-https://github.com/zsh-users/zsh-syntax-highlighting
-https://github.com/zsh-users/zsh-completions
+    - https://github.com/Aloxaf/fzf-tab
+    - https://github.com/wfxr/forgit
+    - https://github.com/zsh-users/zsh-autosuggestions
+    - https://github.com/zsh-users/zsh-syntax-highlighting
+    - https://github.com/zsh-users/zsh-completions
 - ctrl + t
 <img width="923" height="570" alt="image" src="https://github.com/user-attachments/assets/164e4390-6db6-4ad1-9d70-c3a9648b81db" />
 - ctrl + r
