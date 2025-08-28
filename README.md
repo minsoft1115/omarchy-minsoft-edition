@@ -35,6 +35,10 @@ https://youtu.be/0E-zU2Uq-rM?si=P68lZO7aK-Q5-maE
 ### lazyvim plugins
 - scorllbar
 
+### starship
+<img width="923" height="103" alt="image" src="https://github.com/user-attachments/assets/6d9bc449-daee-4c00-93ba-5c22806414df" />
+
+
 ### waybar
 - left
 <img width="602" height="31" alt="image" src="https://github.com/user-attachments/assets/19c02fe3-b5bd-49ac-8261-f166aa8e1717" />
@@ -55,6 +59,13 @@ https://github.com/wfxr/forgit
 https://github.com/zsh-users/zsh-autosuggestions
 https://github.com/zsh-users/zsh-syntax-highlighting
 https://github.com/zsh-users/zsh-completions
+- ctrl + t
+<img width="923" height="570" alt="image" src="https://github.com/user-attachments/assets/164e4390-6db6-4ad1-9d70-c3a9648b81db" />
+- ctrl + r
+<img width="928" height="577" alt="image" src="https://github.com/user-attachments/assets/23c654a1-af82-4203-adc5-5b232a165aa2" />
+- alt + c
+<img width="931" height="600" alt="image" src="https://github.com/user-attachments/assets/c4304c9f-9850-4682-9990-cd5b283fe748" />
+
 
 - gitstatus
 <img width="550" height="403" alt="image" src="https://github.com/user-attachments/assets/54abcdea-3e47-4170-9793-ff01272c649e" />
