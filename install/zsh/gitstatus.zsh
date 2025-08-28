@@ -277,7 +277,6 @@ git-summary() {
   }
 
   # 나머지 라인 출력
-  local i
   for i in {1..$idx}; do
     # 위에서 Worktree 제목부터 구성했으므로, 브랜치와 구분선 이후 전체를 그대로 렌더
     render_line $i
