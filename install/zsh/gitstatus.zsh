@@ -270,7 +270,13 @@ git-summary() {
     fi
     [[ -n "$vpre" ]] && printf "%s" "$vpre"
     if [[ -n "$vnum" ]]; then
-      printf "%b%s%b" "$C_NUM" "$vnum" "$RESET"
+      if (( vnum > 0 )); then
+        # 1 이상 → 색상 적용
+        printf "%b%s%b" "$C_NUM" "$vnum" "$RESET"
+      else
+        # 0일 땐 색상 없이 그냥 출력
+        printf "%s" "$vnum"
+      fi
     fi
     [[ -n "$vsuf" ]] && printf "%s" "$vsuf"
     printf "\n"
