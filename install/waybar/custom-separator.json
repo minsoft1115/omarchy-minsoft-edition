@@ -1,0 +1,8 @@
+{
+  "custom/separator": {
+    "format": " | ",
+    "interval": "once",
+    "tooltip": false
+  }
+}
+

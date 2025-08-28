@@ -1,0 +1,11 @@
+{
+  "user": {
+    "format": "{user}",
+    "interval": 60,
+    "height": 30,
+    "width": 30,
+    "icon": true,
+    "swap-icon-label": false
+  }
+}
+

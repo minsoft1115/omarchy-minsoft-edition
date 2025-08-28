@@ -1,0 +1,13 @@
+[Unit]
+Description=Bluetooth Connection Notification Service
+After=dbus.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/env python3 %h/.config/minsoft1115/scripts/bt-notify-dbus.py
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=default.target
+

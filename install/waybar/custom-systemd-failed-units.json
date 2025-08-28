@@ -1,0 +1,11 @@
+{
+  "custom/systemd-failed-units": {
+    "hide-on-ok": true,
+    "format": "✗ {nr_failed}",
+    "format-ok": "✓",
+    "system": true,
+    "user": true,
+    "on-click": "alacritty --hold -e ~/.config/minsoft1115/scripts/show_failed_units.sh"
+  }
+}
+

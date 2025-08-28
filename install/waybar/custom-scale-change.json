@@ -1,0 +1,10 @@
+{
+  "custom/scale-change": {
+    "tooltip": false,
+    "format": "{}",
+    "exec": "~/.config/minsoft1115/scripts/hypr-scales-current.sh",
+    "on-click": "~/.config/minsoft1115/scripts/hypr-scales-menu.sh",
+    "interval": 60
+  }
+}
+

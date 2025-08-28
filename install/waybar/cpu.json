@@ -1,0 +1,9 @@
+{
+  "cpu": {
+    "interval": 5,
+    "format": "{usage}%",
+    "on-click": "alacritty -e btop",
+    "nospacing": true
+  }
+}
+

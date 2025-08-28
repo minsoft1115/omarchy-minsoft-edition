@@ -1,0 +1,17 @@
+{
+  "modules-right": [
+    "custom/aur",
+    "tray",
+    "bluetooth",
+    "network",
+    "custom/vpn",
+    "pulseaudio",
+    "battery",
+    "power-profiles-daemon",
+    "custom/separator",
+    "custom/scale-change",
+    "custom/separator",
+    "systemd-failed-units"
+  ]
+}
+

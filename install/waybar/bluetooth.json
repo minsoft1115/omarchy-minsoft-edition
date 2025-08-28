@@ -1,0 +1,12 @@
+{
+  "bluetooth": {
+    "format": " {num_connections}",
+    "format-on": " 0",
+    "format-off": " off",
+    "format-disabled": "󰂲",
+    "format-connected": " {num_connections}",
+    "tooltip-format": "Devices connected: {num_connections}",
+    "on-click": "alacritty --class=bluetui -e bluetui"
+  }
+}
+
