@@ -8,6 +8,12 @@ $character"""
 # 빈 줄 삽입 비활성화 (format에서 직접 제어)
 add_newline = false
 
+[palettes.my]
+orange = "#FFA500"
+orange_dark = "#FF8C00"
+orange_soft = "#FFB86C"
+
+
 [character]
 success_symbol = '[  ](bold green) '   # 성공 시 ➜ 표시(굵은 초록색)
 error_symbol = '[  ](bold red) '       # 실패 시 ✗ 표시(굵은 빨간색)
@@ -69,7 +75,7 @@ format = ' [$output]($style) '
 min_time = 0                # 0ms 이상이면 항상 표시
 show_milliseconds = true    # 밀리초까지 표시
 format = '󱦟 [$duration]($style) '  # 원하면 커스텀
-style = 'bold yellow'
+style = 'bold #FFA500'
 
 
 # languages.toml - Starship 최신 버전에서 지원하는 언어 모듈 설정 (Nerd Font 아이콘 포함)
