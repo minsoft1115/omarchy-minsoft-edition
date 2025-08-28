@@ -50,6 +50,9 @@ https://youtu.be/0E-zU2Uq-rM?si=P68lZO7aK-Q5-maE
 - right
 <img width="572" height="32" alt="image" src="https://github.com/user-attachments/assets/9c88b562-40a0-40b2-9f76-cb9fa5900448" />
 
+- monitor scale
+<img width="583" height="401" alt="image" src="https://github.com/user-attachments/assets/720cc185-7c7d-430d-aef7-98c2c1e25a5e" />
+
 
 ### zsh
 - zsh
