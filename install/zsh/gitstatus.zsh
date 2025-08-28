@@ -1,212 +1,286 @@
-# gitstatus 바인딩 로드 및 데몬 시작(세션 고유 ID 사용)
+# gitstatus 바인딩 로드/데몬 시작 (세션 고유 NAME 사용)
 source "$HOME/gitstatus/gitstatus.plugin.zsh"
 gitstatus_stop "git_summary_$$" 2>/dev/null
 gitstatus_start "git_summary_$$"
 
-# git-summary: gitstatus 데몬에서 상태 수집 → 포맷 출력
+# git-summary: 데이터 먼저(평문), 렌더에서만 부분 색(아이콘/숫자), 라인당 단일 printf
 git-summary() {
-  # 함수 안에서만 옵션/환경 변경이 적용되도록 로컬 옵션 사용
-  setopt local_options err_return no_unset typeset_silent
+  setopt local_options err_return no_unset
   emulate -L zsh
 
-  # 색상/아이콘 설정 (Nerd Font 환경 가정, 필요 시 I_* 변경)
+  # ESC 표기는 $'\e'로 통일
   local RESET=$'\e[0m'
+
+  # 아이콘 색(예시 팔레트 — 필요 시 조정)
   local C_ICON_BRANCH=$'\e[38;5;45m'
-  local C_ICON_UNSTAGED=$'\e[38;5;178m'
-  local C_ICON_WTMOD=$'\e[38;5;178m'
-  local C_ICON_WTDEL=$'\e[38;5;196m'   # 삭제: 붉은색
+  local C_ICON_GROUP_UNSTAGED=$'\e[38;5;178m'
+  local C_ICON_GROUP_STAGED=$'\e[38;5;82m'
+  local C_ICON_MODIFIED=$'\e[38;5;178m'
+  local C_ICON_DELETED=$'\e[38;5;196m'
+  local C_ICON_NEW=$'\e[38;5;70m'
   local C_ICON_UNTRACKED=$'\e[38;5;39m'
-  local C_ICON_STAGED=$'\e[38;5;82m'
   local C_ICON_CONFLICT=$'\e[38;5;196m'
   local C_ICON_STASH=$'\e[38;5;214m'
   local C_ICON_AHEAD=$'\e[38;5;70m'
   local C_ICON_BEHIND=$'\e[38;5;203m'
-  local C_NUM=$'\e[38;5;39m'   # 숫자만 이 색 적용
 
-  # 아이콘 (Nerd Font)
-  local I_BRANCH="" I_AHEAD="󰁝" I_BEHIND="󰁅" I_STAGED="" I_CONFLICT="󰊛" I_UNSTAGED="" I_WTMOD="" I_WTDEL="" I_UNTRACKED="" I_STASH=""
+  # 숫자만 색
+  local C_NUM=$'\e[38;5;39m'
 
-  # Git 저장소 여부 확인
+  # 아이콘(요청 반영)
+  local I_BRANCH=""
+  local I_GROUP_UNSTAGED="󰘓"   # 상위 Unstaged 그룹
+  local I_GROUP_STAGED="󰄬"     # 상위 Staged 그룹
+  local I_MODIFIED="󰷉"        # 하위 modified
+  local I_DELETED=""
+  local I_NEW=""
+  local I_UNTRACKED=""
+  local I_CONFLICT="󰊛"
+  local I_STASH=""
+  local I_AHEAD="󰁝"
+  local I_BEHIND="󰁅"
+
+  # Git repo check
   if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     printf "%s\n" "Not inside a Git repository."
     return 1
   fi
 
-  # gitstatus 데몬 쿼리 (동기)
-  if ! gitstatus_query "git_summary_$$" >/dev/null 2>&1; then
-    printf "%s\n" "gitstatus daemon unavailable."
-    return 1
+  # 기본 데이터 수집
+  local branch upstream ahead behind
+  branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || printf "%s" "(detached)")"
+  upstream="$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || printf "%s" "")"
+  ahead=0; behind=0
+  if [[ -n "$upstream" ]]; then
+    local counts rest
+    counts="$(git rev-list --left-right --count HEAD...$upstream 2>/dev/null)"
+    ahead="${counts%%$'\t'*}"; rest="${counts#*$'\t'}"
+    ahead="${ahead//[^0-9]/}"; [[ -z "$ahead" ]] && ahead=0
+    behind="${rest//[^0-9]/}"; [[ -z "$behind" ]] && behind=0
   fi
 
-  # 브랜치/동기화 정보 (데몬 변수 사용)
-  local branch="${VCS_STATUS_LOCAL_BRANCH:-@${VCS_STATUS_COMMIT:0:7}}"
-  local ahead=${VCS_STATUS_COMMITS_AHEAD:-0}
-  local behind=${VCS_STATUS_COMMITS_BEHIND:-0}
+  # stash 개수
+  local stashed
+  stashed=$(git stash list 2>/dev/null | wc -l | awk '{print $1}')
 
-  # 파일 상태 카운트 (데몬 변수 사용)
-  local staged=${VCS_STATUS_NUM_STAGED:-0}
-  local unstaged=${VCS_STATUS_NUM_UNSTAGED:-0}
-  local untracked=${VCS_STATUS_NUM_UNTRACKED:-0}
-  local conflicted=${VCS_STATUS_NUM_CONFLICTED:-0}
-  local stashed=${VCS_STATUS_STASHES:-0}
+  # status 카운트(포슬린)
+  local staged=0 conflicted=0 unstaged=0 wt_mod=0 untracked=0 staged_new=0 staged_del=0 staged_mod=0 unstaged_del=0
+  local line X Y
+  while IFS= read -r line; do
+    [[ -z "$line" ]] && continue
+    if [[ "${line[1,2]}" == "??" ]]; then
+      untracked=$((untracked+1)); continue
+    fi
+    if [[ "${line[1,2]}" == "!!" ]]; then
+      continue
+    fi
+    X="${line[1,1]}"; Y="${line[2,2]}"
 
-  # Worktree 세부: 삭제(wt_del), 수정만(wt_mod)
-  local wt_del=${VCS_STATUS_NUM_UNSTAGED_DELETED:-0}
-  local wt_mod=$(( unstaged - wt_del ))
-  (( wt_mod < 0 )) && wt_mod=0
+    # 충돌
+    if [[ "$X" == "U" || "$Y" == "U" ]]; then
+      conflicted=$((conflicted+1))
+    fi
 
-  # 라인 데이터(평문) 보관용 배열
+    # 인덱스(좌측 X)
+    case "$X" in
+      A) staged=$((staged+1)); staged_new=$((staged_new+1)) ;;
+      M) staged=$((staged+1)); staged_mod=$((staged_mod+1)) ;;
+      D) staged=$((staged+1)); staged_del=$((staged_del+1)) ;;
+      R|C|T) staged=$((staged+1)) ;; # 세부 유형은 요약
+    esac
+
+    # 워킹트리(우측 Y)
+    case "$Y" in
+      M|T) unstaged=$((unstaged+1)); wt_mod=$((wt_mod+1)) ;;
+      D)   unstaged=$((unstaged+1)); unstaged_del=$((unstaged_del+1)) ;;
+    esac
+  done < <(git status --porcelain 2>/dev/null)
+
+  # 라인 데이터(평문만) — tree, icon, label, vpre, num, vsuf, kind
   typeset -a T_TREE T_ICON T_LABEL T_VPRE T_NUM T_VSUF T_KIND
-  local __n=0
+  local idx=0
 
-  # 1) 브랜치
-  __n=$((__n+1))
-  T_TREE[__n]=""         ; T_ICON[__n]="$I_BRANCH"
-  T_LABEL[__n]="branch"  ; T_VPRE[__n]="" ; T_NUM[__n]="" ; T_VSUF[__n]="$branch"
-  T_KIND[__n]="branch"
+  # Worktree 섹션
+  idx=$((idx+1))
+  T_TREE[$idx]="" ; T_ICON[$idx]="" ; T_LABEL[$idx]="Worktree" ; T_VPRE[$idx]="" ; T_NUM[$idx]="" ; T_VSUF[$idx]="" ; T_KIND[$idx]="section"
 
-  # 2) Worktree 섹션
-  __n=$((__n+1))
-  T_TREE[__n]=""         ; T_ICON[__n]="" ; T_LABEL[__n]="Worktree"
-  T_VPRE[__n]=""         ; T_NUM[__n]=""  ; T_VSUF[__n]=""
-  T_KIND[__n]="section"
+  # ├─ Unstaged(그룹)
+  idx=$((idx+1))
+  T_TREE[$idx]="├─ " ; T_ICON[$idx]="$I_GROUP_UNSTAGED" ; T_LABEL[$idx]="Unstaged"
+  T_VPRE[$idx]="" ; T_NUM[$idx]="$unstaged" ; T_VSUF[$idx]=" files" ; T_KIND[$idx]="group_unstaged"
 
-  # 2-1) Unstaged (files)
-  __n=$((__n+1))
-  T_TREE[__n]="├─ "      ; T_ICON[__n]="$I_UNSTAGED" ; T_LABEL[__n]="Unstaged"
-  T_VPRE[__n]=""         ; T_NUM[__n]="${unstaged}"   ; T_VSUF[__n]=" files"
-  T_KIND[__n]="unstaged"
+  # │  ├─ modified
+  idx=$((idx+1))
+  T_TREE[$idx]="│  ├─ " ; T_ICON[$idx]="$I_MODIFIED" ; T_LABEL[$idx]="modified"
+  T_VPRE[$idx]="" ; T_NUM[$idx]="$wt_mod" ; T_VSUF[$idx]=" files" ; T_KIND[$idx]="wt_modified"
 
-  # 2-2) wt mod (files)
-  __n=$((__n+1))
-  T_TREE[__n]="│  └─ "   ; T_ICON[__n]="$I_WTMOD" ; T_LABEL[__n]="wt mod"
-  T_VPRE[__n]=""         ; T_NUM[__n]="${wt_mod}" ; T_VSUF[__n]=" files"
-  T_KIND[__n]="wtmod"
+  # │  └─ deleted
+  idx=$((idx+1))
+  T_TREE[$idx]="│  └─ " ; T_ICON[$idx]="$I_DELETED" ; T_LABEL[$idx]="deleted"
+  T_VPRE[$idx]="" ; T_NUM[$idx]="$unstaged_del" ; T_VSUF[$idx]=" files" ; T_KIND[$idx]="wt_deleted"
 
-  # 2-3) wt del (files) — 삭제는 붉은색 아이콘 컬러로 출력
-  __n=$((__n+1))
-  T_TREE[__n]="   └─ "   ; T_ICON[__n]="$I_WTDEL" ; T_LABEL[__n]="wt del"
-  T_VPRE[__n]=""         ; T_NUM[__n]="${wt_del}" ; T_VSUF[__n]=" files"
-  T_KIND[__n]="wtdel"
+  # └─ Untracked
+  idx=$((idx+1))
+  T_TREE[$idx]="└─ " ; T_ICON[$idx]="$I_UNTRACKED" ; T_LABEL[$idx]="Untracked"
+  T_VPRE[$idx]="" ; T_NUM[$idx]="$untracked" ; T_VSUF[$idx]=" files" ; T_KIND[$idx]="$([[ $untracked -gt 0 ]] && echo untracked || echo untracked)"
 
-  # 2-4) Untracked (files)
-  __n=$((__n+1))
-  T_TREE[__n]="└─ "      ; T_ICON[__n]="$I_UNTRACKED" ; T_LABEL[__n]="Untracked"
-  T_VPRE[__n]=""         ; T_NUM[__n]="${untracked}"  ; T_VSUF[__n]=" files"
-  T_KIND[__n]="untracked"
+  # Index 섹션
+  idx=$((idx+1))
+  T_TREE[$idx]="" ; T_ICON[$idx]="" ; T_LABEL[$idx]="Index" ; T_VPRE[$idx]="" ; T_NUM[$idx]="" ; T_VSUF[$idx]="" ; T_KIND[$idx]="section"
 
-  # 3) Index 섹션
-  __n=$((__n+1))
-  T_TREE[__n]=""         ; T_ICON[__n]="" ; T_LABEL[__n]="Index"
-  T_VPRE[__n]=""         ; T_NUM[__n]=""  ; T_VSUF[__n]=""
-  T_KIND[__n]="section"
+  # ├─ Staged(그룹)
+  idx=$((idx+1))
+  T_TREE[$idx]="├─ " ; T_ICON[$idx]="$I_GROUP_STAGED" ; T_LABEL[$idx]="Staged"
+  T_VPRE[$idx]="" ; T_NUM[$idx]="$staged" ; T_VSUF[$idx]=" files" ; T_KIND[$idx]="group_staged"
 
-  # 3-1) Staged (files)
-  __n=$((__n+1))
-  T_TREE[__n]="├─ "      ; T_ICON[__n]="$I_STAGED" ; T_LABEL[__n]="Staged"
-  T_VPRE[__n]=""         ; T_NUM[__n]="${staged}"  ; T_VSUF[__n]=" files"
-  T_KIND[__n]="staged"
+  # │  ├─ new
+  idx=$((idx+1))
+  T_TREE[$idx]="│  ├─ " ; T_ICON[$idx]="$I_NEW" ; T_LABEL[$idx]="new"
+  T_VPRE[$idx]="" ; T_NUM[$idx]="$staged_new" ; T_VSUF[$idx]=" files" ; T_KIND[$idx]="staged_new"
 
-  # 3-2) Conflicted (files)
-  __n=$((__n+1))
-  T_TREE[__n]="└─ "      ; T_ICON[__n]="$I_CONFLICT" ; T_LABEL[__n]="Conflicted"
-  T_VPRE[__n]=""         ; T_NUM[__n]="${conflicted}" ; T_VSUF[__n]=" files"
-  T_KIND[__n]="conflict"
+  # │  ├─ deleted
+  idx=$((idx+1))
+  T_TREE[$idx]="│  ├─ " ; T_ICON[$idx]="$I_DELETED" ; T_LABEL[$idx]="deleted"
+  T_VPRE[$idx]="" ; T_NUM[$idx]="$staged_del" ; T_VSUF[$idx]=" files" ; T_KIND[$idx]="staged_deleted"
 
-  # 4) Repo state 섹션
-  __n=$((__n+1))
-  T_TREE[__n]=""         ; T_ICON[__n]="" ; T_LABEL[__n]="Repo state"
-  T_VPRE[__n]=""         ; T_NUM[__n]=""  ; T_VSUF[__n]=""
-  T_KIND[__n]="section"
+  # │  └─ modified
+  idx=$((idx+1))
+  T_TREE[$idx]="│  └─ " ; T_ICON[$idx]="$I_MODIFIED" ; T_LABEL[$idx]="modified"
+  T_VPRE[$idx]="" ; T_NUM[$idx]="$staged_mod" ; T_VSUF[$idx]=" files" ; T_KIND[$idx]="staged_modified"
 
-  # 4-1) Stashed
-  __n=$((__n+1))
-  T_TREE[__n]="├─ "      ; T_ICON[__n]="$I_STASH" ; T_LABEL[__n]="Stashed"
-  T_VPRE[__n]=""         ; T_NUM[__n]="${stashed}" ; T_VSUF[__n]=""
-  T_KIND[__n]="stash"
+  # └─ Conflicted
+  idx=$((idx+1))
+  T_TREE[$idx]="└─ " ; T_ICON[$idx]="$I_CONFLICT" ; T_LABEL[$idx]="Conflicted"
+  T_VPRE[$idx]="" ; T_NUM[$idx]="$conflicted" ; T_VSUF[$idx]=" files" ; T_KIND[$idx]="conflicted"
 
-  # 4-2) Ahead (commit count)
-  __n=$((__n+1))
-  T_TREE[__n]="├─ "      ; T_ICON[__n]="$I_AHEAD" ; T_LABEL[__n]="Ahead"
-  T_VPRE[__n]=""         ; T_NUM[__n]="${ahead}" ; T_VSUF[__n]=""
-  T_KIND[__n]="ahead"
+  # Repo state 섹션
+  idx=$((idx+1))
+  T_TREE[$idx]="" ; T_ICON[$idx]="" ; T_LABEL[$idx]="Repo state" ; T_VPRE[$idx]="" ; T_NUM[$idx]="" ; T_VSUF[$idx]="" ; T_KIND[$idx]="section"
 
-  # 4-3) Behind (commit count)
-  __n=$((__n+1))
-  T_TREE[__n]="└─ "      ; T_ICON[__n]="$I_BEHIND" ; T_LABEL[__n]="Behind"
-  T_VPRE[__n]=""         ; T_NUM[__n]="${behind}" ; T_VSUF[__n]=""
-  T_KIND[__n]="behind"
+  # ├─ Stashed (Repo 단위 — 워킹트리 소속 아님)
+  idx=$((idx+1))
+  T_TREE[$idx]="├─ " ; T_ICON[$idx]="$I_STASH" ; T_LABEL[$idx]="Stashed"
+  T_VPRE[$idx]="" ; T_NUM[$idx]="$stashed" ; T_VSUF[$idx]="" ; T_KIND[$idx]="stashed"
 
-  # 좌측 정렬 폭 계산: tree + icon(+2칸) + label
-  local max_left=0 __ln __icon_gap __left_plain
-  for ((__ln=1; __ln<=__n; __ln++)); do
-    __icon_gap=""
-    [[ -n "${T_ICON[__ln]}" ]] && __icon_gap="  "
-    __left_plain="${T_TREE[__ln]}${T_ICON[__ln]}${__icon_gap}${T_LABEL[__ln]}"
-    (( ${#__left_plain} > max_left )) && max_left=${#__left_plain}
+  # ├─ Ahead
+  idx=$((idx+1))
+  T_TREE[$idx]="├─ " ; T_ICON[$idx]="$I_AHEAD" ; T_LABEL[$idx]="Ahead"
+  T_VPRE[$idx]="" ; T_NUM[$idx]="$ahead" ; T_VSUF[$idx]="" ; T_KIND[$idx]="ahead"
+
+  # └─ Behind
+  idx=$((idx+1))
+  T_TREE[$idx]="└─ " ; T_ICON[$idx]="$I_BEHIND" ; T_LABEL[$idx]="Behind"
+  T_VPRE[$idx]="" ; T_NUM[$idx]="$behind" ; T_VSUF[$idx]="" ; T_KIND[$idx]="behind"
+
+  # 정렬: left = tree + icon(+두칸) + label
+  local max_left=0 i icon_gap left_plain
+  for i in {1..$idx}; do
+    icon_gap=""
+    [[ -n "${T_ICON[$i]}" ]] && icon_gap="  "
+    left_plain="${T_TREE[$i]}${T_ICON[$i]}${icon_gap}${T_LABEL[$i]}"
+    (( ${#left_plain} > max_left )) && max_left=${#left_plain}
   done
 
-  # 라인 유형별 아이콘 색 선택
+  # 아이콘 색 선택
   icon_color_for() {
     case "$1" in
-      branch)    printf "%s" "$C_ICON_BRANCH" ;;
-      unstaged)  printf "%s" "$C_ICON_UNSTAGED" ;;
-      wtmod)     printf "%s" "$C_ICON_WTMOD" ;;
-      wtdel)     printf "%s" "$C_ICON_WTDEL" ;;    # 삭제: 붉은색
-      untracked) printf "%s" "$C_ICON_UNTRACKED" ;;
-      staged)    printf "%s" "$C_ICON_STAGED" ;;
-      conflict)  printf "%s" "$C_ICON_CONFLICT" ;;
-      stash)     printf "%s" "$C_ICON_STASH" ;;
-      ahead)     printf "%s" "$C_ICON_AHEAD" ;;
-      behind)    printf "%s" "$C_ICON_BEHIND" ;;
-      *)         printf "%s" "" ;;
+      branch)          printf "%s" "$C_ICON_BRANCH" ;;
+      group_unstaged)  printf "%s" "$C_ICON_GROUP_UNSTAGED" ;;
+      wt_modified)     printf "%s" "$C_ICON_MODIFIED" ;;
+      wt_deleted)      printf "%s" "$C_ICON_DELETED" ;;
+      untracked)       printf "%s" "$C_ICON_UNTRACKED" ;;
+      group_staged)    printf "%s" "$C_ICON_GROUP_STAGED" ;;
+      staged_new)      printf "%s" "$C_ICON_NEW" ;;
+      staged_deleted)  printf "%s" "$C_ICON_DELETED" ;;
+      staged_modified) printf "%s" "$C_ICON_MODIFIED" ;;
+      conflicted)      printf "%s" "$C_ICON_CONFLICT" ;;
+      stashed)         printf "%s" "$C_ICON_STASH" ;;
+      ahead)           printf "%s" "$C_ICON_AHEAD" ;;
+      behind)          printf "%s" "$C_ICON_BEHIND" ;;
+      section)         printf "%s" "" ;;
+      *)               printf "%s" "" ;;
     esac
   }
 
-  # 한 줄 렌더링(아이콘만 색, 숫자만 색)
+  # 브랜치 라인(상단 별도)
+  {
+    # left 구성: 아이콘만 색, 숫자 없음
+    local tree="" icon="$I_BRANCH" label="branch" icon_gap="  "
+    local left_for_width="${tree}${icon}${icon_gap}${label}"
+    local padspaces=$(( max_left - ${#left_for_width} ))
+    (( padspaces < 0 )) && padspaces=0
+    local sep=" : "
+    # 아이콘만 색
+    printf "%b%s%b%s%*s%s%s\n" \
+      "$C_ICON_BRANCH" "$icon" "$RESET" \
+      "${icon_gap}${label}" \
+      "$padspaces" "" \
+      "$sep" \
+      "$branch"
+  }
+
+  # 구분선(색 없음)
+  printf "%s\n" "----------------------------------------------------"
+
+  # 라인 렌더(아이콘만 색, 숫자만 색)
   render_line() {
     local j="$1"
     local tree icon label kind vpre vnum vsuf
-    tree="${T_TREE[$j]}"; icon="${T_ICON[$j]}"; label="${T_LABEL[$j]}"; kind="${T_KIND[$j]}"
-    vpre="${T_VPRE[$j]}"; vnum="${T_NUM[$j]}"; vsuf="${T_VSUF[$j]}"
+    tree="${T_TREE[$j]}"; icon="${T_ICON[$j]}"; label="${T_LABEL[$j]}"
+    kind="${T_KIND[$j]}"; vpre="${T_VPRE[$j]}"; vnum="${T_NUM[$j]}"; vsuf="${T_VSUF[$j]}"
 
-    local icon_gap=""; [[ -n "$icon" ]] && icon_gap="  "
-    local left_for_width="${tree}${icon}${icon_gap}${label}"
-    local padspaces=$(( max_left - ${#left_for_width} )); (( padspaces < 0 )) && padspaces=0
-    local ICOLOR; ICOLOR="$(icon_color_for "$kind")"
+    local icon_gap=""
+    [[ -n "$icon" ]] && icon_gap="  "
 
-    local has_value=0
-    [[ -n "$vpre$vnum$vsuf" ]] && has_value=1
+    local left_full="${tree}${icon}${icon_gap}${label}"
+    local padspaces=$(( max_left - ${#left_full} ))
+    (( padspaces < 0 )) && padspaces=0
+    local sep=" : "
 
-    if (( ! has_value )); then
+    local ICOLOR
+    ICOLOR="$(icon_color_for "$kind")"
+
+    # 섹션/제목(값 없음)
+    if [[ -z "$vpre$vnum$vsuf" ]]; then
       if [[ -n "$icon" ]]; then
-        printf "%s%b%s%b%s\n" "$tree" "$ICOLOR" "$icon" "$RESET" "${icon_gap}${label}"
+        printf "%s%b%s%b%s\n" \
+          "$tree" \
+          "$ICOLOR" "$icon" "$RESET" \
+          "${icon_gap}${label}"
       else
         printf "%s%s\n" "$tree" "$label"
       fi
-    else
-      local sep=" : "
-      if [[ -n "$icon" ]]; then
-        printf "%s%b%s%b%s%*s%s" \
-          "$tree" "$ICOLOR" "$icon" "$RESET" "${icon_gap}${label}" \
-          "$padspaces" "" "$sep"
-      else
-        printf "%s%s%*s%s" \
-          "$tree" "$label" \
-          "$padspaces" "" "$sep"
-      fi
-      [[ -n "$vpre" ]] && printf "%s" "$vpre"
-      [[ -n "$vnum" ]] && printf "%b%s%b" "$C_NUM" "$vnum" "$RESET"
-      [[ -n "$vsuf" ]] && printf "%s" "$vsuf"
-      printf "\n"
+      return
     fi
+
+    # 값 있는 줄: left + pad + " : " + vpre + (숫자만 색) + vsuf
+    if [[ -n "$icon" ]]; then
+      printf "%s%b%s%b%s%*s%s" \
+        "$tree" \
+        "$ICOLOR" "$icon" "$RESET" \
+        "${icon_gap}${label}" \
+        "$padspaces" "" \
+        "$sep"
+    else
+      printf "%s%s%*s%s" \
+        "$tree" \
+        "$label" \
+        "$padspaces" "" \
+        "$sep"
+    fi
+    [[ -n "$vpre" ]] && printf "%s" "$vpre"
+    if [[ -n "$vnum" ]]; then
+      printf "%b%s%b" "$C_NUM" "$vnum" "$RESET"
+    fi
+    [[ -n "$vsuf" ]] && printf "%s" "$vsuf"
+    printf "\n"
   }
 
-  # 출력
-  render_line 1
-  printf "%s\n" "----------------------------------------------------"
-  for ((__ln=2; __ln<=__n; __ln++)); do
-    render_line "$__ln"
+  # 나머지 라인 출력
+  local i
+  for i in {1..$idx}; do
+    # 위에서 Worktree 제목부터 구성했으므로, 브랜치와 구분선 이후 전체를 그대로 렌더
+    render_line $i
   done
 }
 
