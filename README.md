@@ -1,4 +1,5 @@
 # omarchy-minsoft-edition
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d2500228-a515-4e47-888f-6a01f768dd0b" />
 
 ### advcpmv
 https://github.com/jarun/advcpmv
