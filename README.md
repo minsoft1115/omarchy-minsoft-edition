@@ -36,7 +36,14 @@ https://youtu.be/0E-zU2Uq-rM?si=P68lZO7aK-Q5-maE
 - scorllbar
 
 ### waybar
-<img width="1920" height="38" alt="image" src="https://github.com/user-attachments/assets/0d165ddf-b0a9-418c-ab04-d0d14c656d19" />
+- left
+<img width="602" height="31" alt="image" src="https://github.com/user-attachments/assets/19c02fe3-b5bd-49ac-8261-f166aa8e1717" />
+
+- center
+<img width="217" height="38" alt="image" src="https://github.com/user-attachments/assets/a5052753-337c-42b0-8958-e469f15ee555" />
+
+- right
+<img width="572" height="32" alt="image" src="https://github.com/user-attachments/assets/9c88b562-40a0-40b2-9f76-cb9fa5900448" />
 
 
 ### zsh
