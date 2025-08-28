@@ -2,7 +2,7 @@
 
 # 전체 프롬프트: 첫 번째 줄에 path (왼쪽)와 Git/실행 시간/언어 (오른쪽) 배치, 두 번째 줄에 입력 기호
 format = """
- $directory$fill$git_branch$cmd_duration$nodejs$python$java$golang$rust$php$c$cpp$dart$dotnet$kotlin$lua$rlang
+ $directory$fill${custom.git_repo}$git_branch$cmd_duration$nodejs$python$java$golang$rust$php$c$cpp$dart$dotnet$kotlin$lua$rlang
 $character"""
 
 # 빈 줄 삽입 비활성화 (format에서 직접 제어)
@@ -29,6 +29,39 @@ truncate_to_repo = false  # Git repo 안에서 path truncation 비활성화 (전
 symbol = "\ue725 "  # Nerd Font Git 브랜치 아이콘 (대체: "\uf418 " 또는 "\ue0a0 ")
 format = "[$symbol$branch]($style) "
 style = "bold purple"
+
+
+
+[custom.git_repo]
+command = '''
+URL=$(command git remote get-url origin 2>/dev/null) || exit 0
+
+# .git 제거 및 프로토콜/계정/콜론 처리
+CLEAN="${URL%.git}"
+CLEAN="${CLEAN#ssh://}"; CLEAN="${CLEAN#https://}"; CLEAN="${CLEAN#http://}"
+CLEAN="${CLEAN#git@}"; CLEAN="${CLEAN#*@}"
+CLEAN="${CLEAN/:/\/}"     # host:owner/repo → host/owner/repo
+
+# owner/repo 추출 후 repo만 남기기
+OWNER_REPO="${CLEAN#*/}"          # owner/repo
+REPO="${OWNER_REPO##*/}"          # repo
+
+# 호스트에 따라 아이콘(선택)
+ICON=""
+case "$URL" in
+  *github*)    ICON=" " ;;   # Nerd Fonts
+  *gitlab*)    ICON=" " ;;
+  *bitbucket*) ICON=" " ;;
+  *)           ICON=" " ;;
+esac
+
+[ -n "$REPO" ] || exit 0
+printf "%s%s" "$ICON" "$REPO"
+'''
+when = 'git rev-parse --is-inside-work-tree 2>/dev/null'
+shell = ["sh","--norc","--noprofile"]
+style = "bold yellow"
+format = ' [$output]($style) '
 
 
 # 명령어 실행 시간 표시 (오른쪽에 추가)
