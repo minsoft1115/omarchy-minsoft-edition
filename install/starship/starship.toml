@@ -2,15 +2,15 @@
 
 # 전체 프롬프트: 첫 번째 줄에 path (왼쪽)와 Git/실행 시간/언어 (오른쪽) 배치, 두 번째 줄에 입력 기호
 format = """
-$directory$fill$git_branch$cmd_duration$nodejs$python$java$golang$rust$php$c$cpp$dart$dotnet$kotlin$lua$rlang
+ $directory$fill$git_branch$cmd_duration$nodejs$python$java$golang$rust$php$c$cpp$dart$dotnet$kotlin$lua$rlang
 $character"""
 
 # 빈 줄 삽입 비활성화 (format에서 직접 제어)
 add_newline = false
 
 [character]
-success_symbol = '[ ](bold green) '   # 성공 시 ➜ 표시(굵은 초록색)
-error_symbol = '[ ](bold red) '       # 실패 시 ✗ 표시(굵은 빨간색)
+success_symbol = '[  ](bold green) '   # 성공 시 ➜ 표시(굵은 초록색)
+error_symbol = '[  ](bold red) '       # 실패 시 ✗ 표시(굵은 빨간색)
 
 
 # Fill 모듈: 첫 번째 줄의 왼쪽과 오른쪽 사이를 채움 (오른쪽 정렬 효과)
