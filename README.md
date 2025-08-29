@@ -1,4 +1,11 @@
 # omarchy-minsoft-edition
+First and foremost, gratitude goes to the creators of Omarchy(https://omarchy.org/).
+
+This is a customized `Minsoft Edition` built upon the original Omarchy installation.
+
+Approximately 90% of the scripts and code have been generated with the assistance of AI.
+
+
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d2500228-a515-4e47-888f-6a01f768dd0b" />
 
 ### advcpmv
