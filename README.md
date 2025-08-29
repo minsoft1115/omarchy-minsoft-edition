@@ -1,8 +1,6 @@
 # omarchy-minsoft-edition
 First and foremost, gratitude goes to the creators of Omarchy(https://omarchy.org/).
-
 This is a customized `Minsoft Edition` built upon the original Omarchy installation.
-
 Approximately 90% of the scripts and code have been generated with the assistance of AI.
 
 
