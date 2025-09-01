@@ -1,0 +1,313 @@
+# ~/.config/starship.toml
+
+# 전체 프롬프트: 첫 번째 줄에 path (왼쪽)와 Git/실행 시간/언어 (오른쪽) 배치, 두 번째 줄에 입력 기호
+format = """
+ $directory$fill${custom.git_repo}$git_branch$cmd_duration$nodejs$python$java$golang$rust$php$c$cpp$dart$dotnet$kotlin$lua$rlang
+$character"""
+
+# 빈 줄 삽입 비활성화 (format에서 직접 제어)
+add_newline = false
+
+[palettes.my]
+orange = "#FFA500"
+orange_dark = "#FF8C00"
+orange_soft = "#FFB86C"
+
+
+[character]
+success_symbol = '[  ](bold green) '   # 성공 시 ➜ 표시(굵은 초록색)
+error_symbol = '[  ](bold red) '       # 실패 시 ✗ 표시(굵은 빨간색)
+
+
+# Fill 모듈: 첫 번째 줄의 왼쪽과 오른쪽 사이를 채움 (오른쪽 정렬 효과)
+[fill]
+symbol = " "  # 공백으로 채움 (점선 '-'이나 다른 기호로 변경 가능)
+style = "bold green"  # 필요 시 스타일 조정 (투명하게 하려면 "")
+
+# 왼쪽: 경로 표시 (스타일: bold cyan, Git repo 안에서도 전체 path 보이게)
+[directory]
+format = "[$path]($style) "
+style = "bold cyan"
+truncate_to_repo = false  # Git repo 안에서 path truncation 비활성화 (전체 path 표시)
+
+# Git 브랜치 설정 – Nerd Font 아이콘
+[git_branch]
+symbol = "\ue725 "  # Nerd Font Git 브랜치 아이콘 (대체: "\uf418 " 또는 "\ue0a0 ")
+format = "[$symbol$branch]($style) "
+style = "bold purple"
+
+
+
+[custom.git_repo]
+command = '''
+URL=$(command git remote get-url origin 2>/dev/null) || exit 0
+
+# .git 제거 및 프로토콜/계정/콜론 처리
+CLEAN="${URL%.git}"
+CLEAN="${CLEAN#ssh://}"; CLEAN="${CLEAN#https://}"; CLEAN="${CLEAN#http://}"
+CLEAN="${CLEAN#git@}"; CLEAN="${CLEAN#*@}"
+CLEAN="${CLEAN/:/\/}"     # host:owner/repo → host/owner/repo
+
+# owner/repo 추출 후 repo만 남기기
+OWNER_REPO="${CLEAN#*/}"          # owner/repo
+REPO="${OWNER_REPO##*/}"          # repo
+
+# 호스트에 따라 아이콘(선택)
+ICON=""
+case "$URL" in
+  *github*)    ICON=" " ;;   # Nerd Fonts
+  *gitlab*)    ICON=" " ;;
+  *bitbucket*) ICON=" " ;;
+  *)           ICON=" " ;;
+esac
+
+[ -n "$REPO" ] || exit 0
+printf "%s%s" "$ICON" "$REPO"
+'''
+when = 'git rev-parse --is-inside-work-tree 2>/dev/null'
+shell = ["sh","--norc","--noprofile"]
+style = "bold yellow"
+format = ' [$output]($style) '
+
+
+# 명령어 실행 시간 표시 (오른쪽에 추가)
+[cmd_duration]
+min_time = 0                # 0ms 이상이면 항상 표시
+show_milliseconds = true    # 밀리초까지 표시
+format = '󱦟 [$duration]($style) '  # 원하면 커스텀
+style = 'bold #FFA500'
+
+
+# languages.toml - Starship 최신 버전에서 지원하는 언어 모듈 설정 (Nerd Font 아이콘 포함)
+# Starship.toml에 병합해 사용하세요. 각 모듈은 관련 파일(예: package.json)이 있을 때 활성화됨.
+# 최신 지원 목록 기반 (Starship v1.23.0 기준): c, cmake, cobol, crystal, daml, dart, deno, dotnet, elixir, elm, erlang, fennel, gleam, golang, haskell, haxe, java, julia, kotlin, lua, nim, nodejs, ocaml, opa, perl, php, purescript, python, raku, rlang, red, ruby, rust, scala, swift, vlang, zig 등.
+# 여기서는 인기 있는 것들만 추출; 필요 시 Starship 문서(starship.rs/config/)에서 더 추가.
+
+# C
+[c]
+symbol = "\ue61d "  # C 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold blue"
+
+# C++
+[cpp]
+symbol = "\ue61d "  # C++ 아이콘 (C와 공유)
+format = "via [$symbol$version]($style) "
+style = "bold blue"
+
+# CMake (빌드 도구지만 언어 관련)
+[cmake]
+symbol = "\ue626 "  # CMake 아이콘 (대체)
+format = "via [$symbol$version]($style) "
+style = "bold blue"
+
+# COBOL
+[cobol]
+symbol = "\ue60b "  # COBOL 아이콘 (대체)
+format = "via [$symbol$version]($style) "
+style = "bold blue"
+
+# Crystal
+[crystal]
+symbol = "\ue62f "  # Crystal 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold red"
+
+# Daml
+[daml]
+symbol = "\ue62d "  # Daml 아이콘 (대체)
+format = "via [$symbol$version]($style) "
+style = "bold cyan"
+
+# Dart
+[dart]
+symbol = "\ue798 "  # Dart 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold blue"
+
+# Deno
+[deno]
+symbol = "\ue57a "  # Deno 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold green"
+
+# .NET
+[dotnet]
+symbol = "󰌛 "  # .NET 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold blue"
+
+# Elixir
+[elixir]
+symbol = "\ue62d "  # Elixir 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold purple"
+
+# Elm
+[elm]
+symbol = "\ue62c "  # Elm 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold blue"
+
+# Erlang
+[erlang]
+symbol = "\ue7b1 "  # Erlang 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold red"
+
+# Fennel
+[fennel]
+symbol = "\ue62e "  # Fennel 아이콘 (대체)
+format = "via [$symbol$version]($style) "
+style = "bold green"
+
+# Gleam
+[gleam]
+symbol = "\ue62e "  # Gleam 아이콘 (대체)
+format = "via [$symbol$version]($style) "
+style = "bold orange"
+
+# Go (Golang)
+[golang]
+symbol = "\ue626 "  # Go 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold blue"
+
+# Haskell
+[haskell]
+symbol = "\ue777 "  # Haskell 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold purple"
+
+# Haxe
+[haxe]
+symbol = "\ue62f "  # Haxe 아이콘 (대체)
+format = "via [$symbol$version]($style) "
+style = "bold orange"
+
+# Java
+[java]
+symbol = "\ue738 "  # Java 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold red"
+
+# Julia
+[julia]
+symbol = "\ue624 "  # Julia 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold purple"
+
+# Kotlin
+[kotlin]
+symbol = "\ue634 "  # Kotlin 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold purple"
+
+# Lua
+[lua]
+symbol = "\ue620 "  # Lua 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold blue"
+
+# Nim
+[nim]
+symbol = "\ue6a4 "  # Nim 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold yellow"
+
+# Node.js
+[nodejs]
+symbol = "\ue718 "  # Node.js 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold green"
+
+# OCaml
+[ocaml]
+symbol = "\ue63a "  # OCaml 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold orange"
+
+# OPA
+[opa]
+symbol = "\ue62e "  # OPA 아이콘 (대체)
+format = "via [$symbol$version]($style) "
+style = "bold blue"
+
+# Perl
+[perl]
+symbol = "\ue731 "  # Perl 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold red"
+
+# PHP
+[php]
+symbol = "\ue73d "  # PHP 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold purple"
+
+# Purescript
+[purescript]
+symbol = "\ue630 "  # Purescript 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold white"
+
+# Python
+[python]
+symbol = "\ue73c "  # Python 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold yellow"
+
+# Raku
+[raku]
+symbol = "\ue731 "  # Raku 아이콘 (Perl 공유)
+format = "via [$symbol$version]($style) "
+style = "bold red"
+
+# R (rlang)
+[rlang]
+symbol = "\ue6a2 "  # R 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold blue"
+
+# Red
+[red]
+symbol = "\ue62e "  # Red 아이콘 (대체)
+format = "via [$symbol$version]($style) "
+style = "bold red"
+
+# Ruby
+[ruby]
+symbol = "\ue791 "  # Ruby 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold red"
+
+# Rust
+[rust]
+symbol = "\ue7a8 "  # Rust 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold orange"
+
+# Scala
+[scala]
+symbol = "\ue737 "  # Scala 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold red"
+
+# Swift
+[swift]
+symbol = "\uf179 "  # Swift 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold orange"
+
+# V (Vlang)
+[vlang]
+symbol = "\ue62e "  # V 아이콘 (대체)
+format = "via [$symbol$version]($style) "
+style = "bold blue"
+
+# Zig
+[zig]
+symbol = "\ue6a1 "  # Zig 아이콘
+format = "via [$symbol$version]($style) "
+style = "bold yellow"
+

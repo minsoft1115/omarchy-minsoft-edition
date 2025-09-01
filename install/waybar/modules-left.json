@@ -1,0 +1,17 @@
+{
+  "modules-left": [
+    "custom/omarchy",
+    "custom/update",
+    "user",
+    "custom/separator",
+    "clock",
+    "custom/separator",
+    "custom/cpu-temp",
+    "cpu",
+    "custom/separator2",
+    "custom/memory",
+    "custom/separator2",
+    "custom/disk"
+  ]
+}
+

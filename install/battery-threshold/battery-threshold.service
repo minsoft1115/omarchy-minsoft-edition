@@ -1,0 +1,11 @@
+[Unit]
+Description=Battery Threshold DBus Service
+
+[Service]
+ExecStart=/usr/local/sbin/battery_threshold_service.py
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
+

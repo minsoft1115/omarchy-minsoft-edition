@@ -1,0 +1,9 @@
+{
+  "custom/vpn": {
+    "exec": "~/.config/minsoft1115/scripts/vpn-status.sh",
+    "interval": 5,
+    "return-type": "plain",
+    "format": "{}"
+  }
+}
+
