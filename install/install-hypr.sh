@@ -16,4 +16,10 @@ cp ./hypr/hyprland-minsoft1115.conf $HOME/.config/minsoft1115/hypr
 cp ./hypr/bindings-minsoft1115.conf $HOME/.config/minsoft1115/hypr
 cp ./scripts/power-menu.sh $HOME/.config/minsoft1115/scripts
 
+#systemctl --user stop hyprlock-suspend.service
+#systemctl --user disable hyprlock-suspend.service
+
+cp ./scripts/hyprlock-suspend.py $HOME/.config/minsoft1115/scripts
+cp ./scripts/handle-lid-switch.sh $HOME/.config/minsoft1115/scripts
+
 add_line_if_not_exists $HOME/.config/hypr/hyprland.conf "source = ~/.config/minsoft1115/hypr/hyprland-minsoft1115.conf"
