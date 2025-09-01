@@ -25,6 +25,7 @@ alias ssh='TERM=xterm ssh'
 alias diff='f() { diff -u "$1" "$2" | delta; }; f'
 alias cp='advcp -g'
 alias mv='advmv -g'
+alias gdiff='git diff "$@" | delta'
 
 
 source $HOME/.config/minsoft1115/zsh/fzf.zsh
@@ -47,3 +48,4 @@ eval "$(starship init zsh)"
 if ! [[ -z $DISPLAY && $XDG_VTNR -eq 1 ]]; then
     command -v fastfetch >/dev/null && fastfetch -c $HOME/.config/minsoft1115/fastfetch/config-minsoft1115.jsonc
 fi
+export PATH="/usr/lib/rustup/bin:$PATH"
