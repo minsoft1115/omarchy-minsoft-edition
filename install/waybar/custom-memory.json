@@ -4,7 +4,6 @@
     "format": "{text}",
     "interval": 5,
     "exec": "~/.config/minsoft1115/scripts/memory-gauge-waybar.sh",
-    "on-click": "alacritty -e btop"
+    "on-click": "neohtop"
   }
 }
-

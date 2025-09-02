@@ -10,6 +10,8 @@ add_line_if_not_exists() {
   fi
 }
 
+yay -S neohtop --needed
+
 cp ./scripts/aur-status.sh $HOME/.config/minsoft1115/scripts
 cp ./scripts/cpu-temp.sh $HOME/.config/minsoft1115/scripts
 cp ./scripts/disk-usage.sh $HOME/.config/minsoft1115/scripts

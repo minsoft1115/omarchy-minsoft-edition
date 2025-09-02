@@ -37,7 +37,6 @@ cp ./hypr/bindings-minsoft1115.conf $HOME/.config/minsoft1115/hypr
 cp ./scripts/power-menu.sh $HOME/.config/minsoft1115/scripts
 
 sudo pacman -S gedit --needed --noconfirm
-#yay -S neohtop
 sudo pacman -S lite-xl --needed --noconfirm
 
 cp /usr/share/applications/org.lite_xl.lite_xl.desktop $HOME/.local/share/applications/

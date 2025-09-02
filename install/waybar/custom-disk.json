@@ -4,7 +4,6 @@
     "format": "{text}",
     "interval": 30,
     "exec": "~/.config/minsoft1115/scripts/disk-usage.sh",
-    "on-click": "alacritty -e btop"
+    "on-click": "neohtop"
   }
 }
-

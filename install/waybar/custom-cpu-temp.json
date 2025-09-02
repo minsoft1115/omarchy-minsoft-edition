@@ -3,7 +3,6 @@
     "exec": "~/.config/minsoft1115/scripts/cpu-temp.sh",
     "interval": 10,
     "return-type": "json",
-    "on-click": "alacritty -e btop"
+    "on-click": "neohtop"
   }
 }
-
