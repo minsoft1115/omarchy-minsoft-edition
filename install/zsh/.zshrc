@@ -8,6 +8,7 @@ plugins=(
   zsh-autosuggestions
   zsh-syntax-highlighting
   zsh-completions
+  zsh-history-substring-search
   zoxide                  # zoxide ('z' 명령어로 스마트하게 디렉토리 이동)
   fzf                     # fzf 기본 기능 및 키바인딩 (Ctrl-T, Ctrl-R, Alt-C)
   fzf-tab                 # fzf를 이용한 자동완성 기능 (매우 중요)
@@ -30,6 +31,9 @@ gdiff() { git diff "$@" | delta; }
 
 autoload -U compinit
 compinit
+
+bindkey "$terminfo[kcuu1]" history-substring-search-up
+bindkey "$terminfo[kcud1]" history-substring-search-down
 
 source $HOME/.config/minsoft1115/zsh/fzf.zsh
 source $HOME/.config/minsoft1115/zsh/gitstatus.zsh
