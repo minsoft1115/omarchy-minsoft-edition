@@ -53,3 +53,6 @@ cp ./scripts/hyprlock-suspend.py $HOME/.config/minsoft1115/scripts
 cp ./scripts/handle-lid-switch.sh $HOME/.config/minsoft1115/scripts
 
 add_line_if_not_exists $HOME/.config/hypr/hyprland.conf "source = ~/.config/minsoft1115/hypr/hyprland-minsoft1115.conf"
+
+./scripts/add-or-update-key-in-section.py ~/.config/hypr/hypridle.conf "general" "ignore_systemd_inhibit" false
+./scripts/add-or-update-key-in-section.py ~/.config/hypr/hypridle.conf "general" "ignore_dbus_inhibit" false
