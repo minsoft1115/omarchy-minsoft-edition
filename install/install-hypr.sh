@@ -16,6 +16,8 @@ cp ./hypr/hyprland-minsoft1115.conf $HOME/.config/minsoft1115/hypr
 cp ./hypr/bindings-minsoft1115.conf $HOME/.config/minsoft1115/hypr
 cp ./scripts/power-menu.sh $HOME/.config/minsoft1115/scripts
 
+sudo pacman -S gedit --needed --noconfirm
+
 #systemctl --user stop hyprlock-suspend.service
 #systemctl --user disable hyprlock-suspend.service
 
