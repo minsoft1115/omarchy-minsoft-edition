@@ -204,6 +204,7 @@ if ((WINDOW_X < 0)); then
   HEIGHT_CHANGE=$((TARGET_HEIGHT - WINDOW_HEIGHT))
 
   hyprctl --batch "dispatch resizewindowpixel $WIDTH_CHANGE $HEIGHT_CHANGE,address:$WINDOW_ADDRESS; dispatch movewindowpixel $PIXELS_TO_MOVE_X $PIXELS_TO_MOVE_Y,address:$WINDOW_ADDRESS"
+  hyprctl dispatch focuswindow "address:$WINDOW_ADDRESS" >/dev/null 2>&1
   echo "Operation completed."
 
 # Case 3: Window is visible, so toggle its width and correct its position.
@@ -226,5 +227,6 @@ else
   fi
 
   hyprctl --batch "dispatch resizewindowpixel $WIDTH_CHANGE $HEIGHT_CHANGE,address:$WINDOW_ADDRESS; dispatch movewindowpixel $PIXELS_TO_MOVE_X $PIXELS_TO_MOVE_Y,address:$WINDOW_ADDRESS"
+  hyprctl dispatch focuswindow "address:$WINDOW_ADDRESS" >/dev/null 2>&1
   echo "Operation completed."
 fi

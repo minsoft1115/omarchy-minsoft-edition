@@ -1,4 +1,7 @@
+sudo pacman -S gtk4 --neended --noconfirm
 sudo pacman -S flakpak --neended --noconfirm
+
+cp -r ./sidepad/gtk-4.0 $HOME/.config
 
 cp /etc/profile.d/flatpak.sh $HOME/.config/minsoft1115
 $HOME/.config/minsoft1115/flatpak.sh
