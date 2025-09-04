@@ -27,8 +27,10 @@ alias ssh='TERM=xterm ssh'
 alias diff='f() { diff -u "$1" "$2" | delta; }; f'
 alias cp='advcp -g'
 alias mv='advmv -g'
+alias cat='c() { bat -p "$@"; }; c'
 
 gdiff() { git diff "$@" | delta; }
+
 
 autoload -U compinit
 compinit
