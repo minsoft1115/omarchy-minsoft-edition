@@ -27,8 +27,9 @@ alias ssh='TERM=xterm ssh'
 alias diff='f() { diff -u "$1" "$2" | delta; }; f'
 alias cp='advcp -g'
 alias mv='advmv -g'
-alias cat='c() { bat -p "$@"; }; c'
+#alias cat='c() { bat -p "$@"; }; c'
 
+cat() { bat -p --paging=never "$@" }
 gdiff() { git diff "$@" | delta; }
 
 
