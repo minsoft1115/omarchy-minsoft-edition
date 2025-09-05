@@ -2,17 +2,22 @@
 
 # 전체 프롬프트: 첫 번째 줄에 path (왼쪽)와 Git/실행 시간/언어 (오른쪽) 배치, 두 번째 줄에 입력 기호
 format = """
- $directory$fill${custom.git_repo}$git_branch$cmd_duration$nodejs$python$java$golang$rust$php$c$cpp$dart$dotnet$kotlin$lua$rlang
+ \\[ $username\\] $directory$fill${custom.git_repo}$git_branch$cmd_duration$nodejs$python$java$golang$rust$php$c$cpp$dart$dotnet$kotlin$lua$rlang
 $character"""
 
 # 빈 줄 삽입 비활성화 (format에서 직접 제어)
 add_newline = false
 
+[username]
+disabled = false
+show_always = true
+format = "[$user]($style) "
+
+
 [palettes.my]
 orange = "#FFA500"
 orange_dark = "#FF8C00"
 orange_soft = "#FFB86C"
-
 
 [character]
 success_symbol = '[  ](bold green) '   # 성공 시 ➜ 표시(굵은 초록색)
