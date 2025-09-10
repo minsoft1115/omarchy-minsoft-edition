@@ -11,7 +11,8 @@
     "custom/separator",
     "custom/scale-change",
     "custom/separator",
-    "systemd-failed-units"
+    "systemd-failed-units",
+    "custom/swaync"
   ]
 }
 

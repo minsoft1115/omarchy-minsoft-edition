@@ -1,0 +1,109 @@
+:root {
+  --border-radius: 0px;
+  --noti-bg: 48, 48, 48;
+  --noti-bg-alpha: 0.95;
+}
+
+.notification-row button.settings {
+  display: none;
+}
+
+.control-center { 
+  background: rgba(var(--noti-bg), var(--noti-bg-alpha)); 
+}
+
+.close-button {
+  border-radius: 0%;
+}
+
+.notification-background {
+  background: rgba(var(--noti-bg), var(--noti-bg-alpha));
+}
+
+.notification-row .notification-background .notification {
+  border-radius: var(--border-radius);
+}
+
+.notification-row .notification-background .notification .notification-default-action {
+  border-radius: var(--border-radius);
+}
+
+.notification-row .notification-background .notification .notification-default-action:not(:only-child) {
+  /* When alternative actions are visible */
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content {
+  border-radius: var(--border-radius);
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .image {
+  border-radius: var(--border-radius);
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .inline-reply .inline-reply-entry {
+  border-radius: var(--border-radius);
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .inline-reply .inline-reply-button {
+  border-radius: var(--border-radius);
+}
+
+.notification-row .notification-background .notification .notification-alt-actions {
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+
+.notification-row .notification-background .notification .notification-action > button {
+  border-radius: var(--border-radius);
+  color: var(--text-color);
+}
+
+.control-center {
+  border-radius: var(--border-radius);
+}
+
+.widget {
+  border-radius: var(--border-radius);
+}
+
+.widget-title > button {
+  border-radius: var(--border-radius);
+}
+
+.widget-dnd switch {
+  border-radius: var(--border-radius);
+}
+
+.widget-dnd switch slider {
+  border-radius: var(--border-radius);
+}
+
+.widget-mpris .widget-mpris-player {
+  border-radius: var(--border-radius);
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay .widget-mpris-album-art {
+  border-radius: var(--border-radius);
+}
+
+.widget-buttons-grid flowboxchild > button {
+  border-radius: var(--border-radius);
+}
+
+.widget-menubar > .menu-button-bar > .widget-menubar-container button {
+  border-radius: var(--border-radius);
+}
+
+.widget-menubar > revealer * button {
+  border-radius: var(--border-radius);
+}
+
+.per-app-volume {
+  border-radius: var(--border-radius);
+}
+
+.widget-inhibitors > button {
+  border-radius: var(--border-radius);
+}

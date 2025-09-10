@@ -11,6 +11,7 @@ add_line_if_not_exists() {
 }
 
 yay -S neohtop --needed
+sudo pacman -S swaync --needed
 
 cp ./scripts/aur-status.sh $HOME/.config/minsoft1115/scripts
 cp ./scripts/cpu-temp.sh $HOME/.config/minsoft1115/scripts
@@ -46,6 +47,7 @@ json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/network.json '.network
 json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/power-profiles-daemon.json '."power-profiles-daemon" = $b[0]."power-profiles-daemon"')
 json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/pulseaudio.json '.pulseaudio = $b[0].pulseaudio')
 json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/user.json '.user = $b[0].user')
+json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/custom-swaync.json '."custom/swaync" = $b[0]."custom/swaync"')
 json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/modules-left.json '."modules-left" = $b[0]."modules-left"')
 json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/modules-center.json '."modules-center" = $b[0]."modules-center"')
 json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/modules-right.json '."modules-right" = $b[0]."modules-right"')
@@ -54,5 +56,8 @@ echo "$json_data" >$WAYBAR_CONFIG_FILE
 
 mkdir $HOME/.config/minsoft1115/waybar
 cp ./waybar/style-minsoft1115.css $HOME/.config/minsoft1115/waybar
+
+mkdir $HOME/.config/swaync/
+cp ./swaync/* $HOME/.config/swaync/
 
 add_line_if_not_exists $HOME/.config/waybar/style.css '@import "../minsoft1115/waybar/style-minsoft1115.css";'

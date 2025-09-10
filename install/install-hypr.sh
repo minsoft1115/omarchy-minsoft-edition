@@ -57,4 +57,4 @@ add_line_if_not_exists $HOME/.config/hypr/hyprland.conf "source = ~/.config/mins
 ./scripts/add-or-update-key-in-section.py ~/.config/hypr/hypridle.conf "general" "ignore_dbus_inhibit" false
 
 ./scripts/add-or-update-key-in-section.py ~/.config/hypr/input.conf "input" "repeat_rate" 80
-./scripts/add-or-update-key-in-section.py ~/.config/hypr/input.conf "input" "repeat_delay" 200
+./scripts/add-or-update-key-in-section.py ~/.config/hypr/input.conf "input" "repeat_delay" 250
