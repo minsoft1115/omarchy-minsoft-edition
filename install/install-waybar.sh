@@ -43,7 +43,8 @@ json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/custom-vpn.json '."cus
 json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/hyprland-workspaces.json '."hyprland/workspaces" = $b[0]."hyprland/workspaces"')
 json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/memory.json '.memory = $b[0].memory')
 json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/cpu.json '.cpu = $b[0].cpu')
-json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/network.json '.network = $b[0].network')
+json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/network-eth.json '."network#eth" = $b[0]."network#eth"')
+json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/network-wifi.json '."network#wifi" = $b[0]."network#wifi"')
 json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/power-profiles-daemon.json '."power-profiles-daemon" = $b[0]."power-profiles-daemon"')
 json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/pulseaudio.json '.pulseaudio = $b[0].pulseaudio')
 json_data=$(echo "$json_data" | jq --slurpfile b ./waybar/user.json '.user = $b[0].user')
@@ -61,3 +62,15 @@ mkdir $HOME/.config/swaync/
 cp ./swaync/* $HOME/.config/swaync/
 
 add_line_if_not_exists $HOME/.config/waybar/style.css '@import "../minsoft1115/waybar/style-minsoft1115.css";'
+
+$HOME/.local/share/omarchy/default/hypr/autostart.conf
+
+DEFAULT_AUTOSTART_FILE="${HOME}/.local/share/omarchy/default/hypr/autostart.conf"
+
+# 백업 생성
+cp -a -- "$DEFAULT_AUTOSTART_FILE" "${DEFAULT_AUTOSTART_FILE}.bak"
+
+# 주석처리: 이미 # 로 시작하는 라인은 건드리지 않음
+# 정확히 해당 라인을 찾되, 앞쪽 공백 허용
+# 예) "exec-once = uwsm app -- mako" -> "# exec-once = uwsm app -- mako"
+sed -i -E '/^[[:space:]]*#/! s/^[[:space:]]*exec-once[[:space:]]*=[[:space:]]*uwsm[[:space:]]+app[[:space:]]*--[[:space:]]*mako([[:space:]].*)?$/# &/' "$DEFAULT_AUTOSTART_FILE"

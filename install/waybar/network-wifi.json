@@ -1,5 +1,8 @@
 {
-  "network": {
+  "network#wifi": {
+    "interface": "wl*",
+    "interval": 3,
+    "nospacing": true,
     "format-icons": [
       "󰤯",
       "󰤟",
@@ -9,13 +12,9 @@
     ],
     "format": "{icon}",
     "format-wifi": "{icon} {essid}",
-    "format-ethernet": "󰲝",
-    "format-disconnected": "󰲜",
+    "format-disconnected": "",
     "tooltip-format-wifi": "{essid} ({frequency} GHz)\n󱦂 {ipaddr}\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
-    "tooltip-format-ethernet": "󱦂 {ipaddr}\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
     "tooltip-format-disconnected": "Disconnected",
-    "interval": 3,
-    "nospacing": true,
     "on-click": "alacritty --class=Impala -e impala"
   }
 }

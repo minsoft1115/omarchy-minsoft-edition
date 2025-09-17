@@ -1,0 +1,12 @@
+{
+  "network#eth": {
+    "interface": "en*",
+    "interval": 3,
+    "nospacing": true,
+    "format": "{icon}",
+    "format-ethernet": "󰲝",
+    "format-disconnected": "",
+    "tooltip-format-ethernet": "󱦂 {ipaddr}\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-disconnected": "Disconnected"
+  }
+}

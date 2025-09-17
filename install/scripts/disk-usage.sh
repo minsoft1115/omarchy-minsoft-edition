@@ -2,7 +2,7 @@
 
 # Convert bytes to GiB
 gib() { awk -v b=$1 'BEGIN{printf "%.2f", b/1073741824}'; }
-░ ▒ ▓
+# ░ ▒ ▓
 # Progress bar (20 blocks)
 bar_len=20
 make_bar() {
