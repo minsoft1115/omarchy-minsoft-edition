@@ -5,6 +5,7 @@
     "user",
     "custom/separator",
     "clock",
+    "custom/screenrecording-indicator",
     "custom/separator",
     "custom/cpu-temp",
     "cpu",
@@ -14,4 +15,3 @@
     "custom/disk"
   ]
 }
-
