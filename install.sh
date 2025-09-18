@@ -36,10 +36,10 @@ echo "continue ..."
 read
 
 # install kitty
-print_in_box "install kitty"
-./install-kitty.sh
-echo "continue ..."
-read
+#print_in_box "install kitty"
+#./install-kitty.sh
+#echo "continue ..."
+#read
 
 # install zsh & oh my zsh & zsh plugins
 print_in_box "install zsh & oh my zsh & zsh plugins"
