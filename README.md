@@ -14,6 +14,7 @@ https://github.com/jarun/advcpmv
 - bluetui
 https://github.com/pythops/bluetui
 - bluetooth notify service
+<img width="547" height="126" alt="image" src="https://github.com/user-attachments/assets/4238878b-2a15-48d1-a9eb-49e0a802a969" />
 
 ### browsers
 - qutebrowser + config
