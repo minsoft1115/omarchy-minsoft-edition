@@ -1,8 +1,7 @@
 {
   "custom/separator2": {
-    "format": ", ",
+    "format": " ",
     "interval": "once",
     "tooltip": false
   }
 }
-
