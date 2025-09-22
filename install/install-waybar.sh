@@ -64,8 +64,6 @@ cp ./swaync/* $HOME/.config/swaync/
 
 add_line_if_not_exists $HOME/.config/waybar/style.css '@import "../minsoft1115/waybar/style-minsoft1115.css";'
 
-$HOME/.local/share/omarchy/default/hypr/autostart.conf
-
 DEFAULT_AUTOSTART_FILE="${HOME}/.local/share/omarchy/default/hypr/autostart.conf"
 
 # 백업 생성

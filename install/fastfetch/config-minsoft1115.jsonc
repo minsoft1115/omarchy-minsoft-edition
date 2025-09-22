@@ -1,5 +1,8 @@
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "general": {
+    "processingTimeout": 1000
+  },
   "logo": {
     "type": "small",
     "padding": {
@@ -8,7 +11,7 @@
     }
   },
   "display": {
-    "key":{
+    "key": {
       "width": 11
     }
   },
@@ -35,11 +38,10 @@
       "key": "Memory",
       "text": "~/.config/minsoft1115/scripts/memory-gauge.sh",
     },
-//    {
-//      "type": "command",
-//      "key": "Swap",
-//      "text": "~/.config/minsoft1115/scripts/swap-gauge.sh",
-//    },
+    //    {
+    //      "type": "command",
+    //      "key": "Swap",
+    //      "text": "~/.config/minsoft1115/scripts/swap-gauge.sh",
+    //    },
   ]
 }
-
