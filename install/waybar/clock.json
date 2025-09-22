@@ -1,0 +1,22 @@
+{
+  "clock": {
+    "format": "{0:L%a}  {0:%H:%M}",
+    "tooltip-format": "<tt><small>{calendar}</small></tt>",
+    "on-click-right": "omarchy-cmd-tzupdate",
+    "calendar": {
+      "mode": "month",
+      "weeks-pos": "right",
+      "format": {
+        "months": "<span color='#ffead3'><b>{}</b></span>",
+        "days": "<span color='#cdd6f4'><b>{}</b></span>",
+        "weeks": "<span color='#99ffdd'><b>W{}</b></span>",
+        "weekdays": "<span color='#7CD37C'><b>{}</b></span>",
+        "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
+      }
+    },
+    "actions": {
+      "on-scroll-up": "shift_up",
+      "on-scroll-down": "shift_down"
+    }
+  }
+}
