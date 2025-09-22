@@ -69,3 +69,4 @@ tooltip {
 #custom-cpu-temp.high { color: #fab387; }
 #custom-cpu-temp.critical { color: #ff4000; }
 
+#workspaces button:not(.hosting-monitor) { opacity: 0.5; }
