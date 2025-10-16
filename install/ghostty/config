@@ -19,3 +19,6 @@ shell-integration-features = no-cursor
 
 # Keyboard bindings
 keybind = f11=toggle_fullscreen
+
+# 하단에 클립보드에 복사되었다는 메시지가 가리는 경우가 많음
+app-notifications = false
