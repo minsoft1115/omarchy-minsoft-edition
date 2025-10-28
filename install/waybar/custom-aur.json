@@ -3,7 +3,7 @@
     "exec": "~/.config/minsoft1115/scripts/aur_status.sh",
     "interval": 60,
     "return-type": "json",
-    "on-click": "xdg-open https://aur.archlinux.org/",
+    "on-click": "xdg-open https://status.archlinux.org/",
     "tooltip": true
   }
 }
