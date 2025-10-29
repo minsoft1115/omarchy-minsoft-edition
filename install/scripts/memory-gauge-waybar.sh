@@ -29,7 +29,7 @@ END {print total, available}
 used=$((total - available))
 
 # JSON 출력용 변수
-text=$(printf " %.1fG Avail" "$(gib $available)")
+text=$(printf " %.1fG Free" "$(gib $available)")
 tooltip=$(make_bar $used $total)
 
 # Waybar에 보낼 JSON 출력
